@@ -5,8 +5,16 @@ from TestRunner import OperationRuns
 
 
 def all_folders():
-    folder_names = ["transformations/" + f for f in list(OperationRuns.get_all_folder_names())]
-    folder_names.extend(["filters/" + f for f in list(OperationRuns.get_all_folder_names("filters"))])
+    folder_names = [
+        f"transformations/{f}"
+        for f in list(OperationRuns.get_all_folder_names())
+    ]
+    folder_names.extend(
+        [
+            f"filters/{f}"
+            for f in list(OperationRuns.get_all_folder_names("filters"))
+        ]
+    )
     return folder_names
 
 
@@ -21,7 +29,7 @@ def recursive_requirements():
     requirements = read("requirements.txt")
     # (1) read all requirements.txt in the folder.
     for folder in all_folders():
-        r_file = os.path.join(os.path.dirname(__file__), folder + "/requirements.txt")
+        r_file = os.path.join(os.path.dirname(__file__), f"{folder}/requirements.txt")
         if os.path.isfile(r_file):
             with open(r_file) as f:
                 requirements += f.read() + "\n"

@@ -30,13 +30,13 @@ def evaluate(
 
     if evaluate_filter:
         filtered_dataset = dataset.apply_filter(operation)
-        print(f"Starting evaluation on the filtered dataset.")
+        print("Starting evaluation on the filtered dataset.")
         performance = evaluate_on_dataset(filtered_dataset, qa_pipeline)
     else:
-        print(f"Starting evaluation on the original dataset.")
+        print("Starting evaluation on the original dataset.")
         performance = evaluate_on_dataset(dataset, qa_pipeline)
 
-        print(f"Starting evaluation on the transformed dataset.")
+        print("Starting evaluation on the transformed dataset.")
         pt_dataset = dataset.apply_transformation(operation)
         pt_performance = evaluate_on_dataset(pt_dataset, qa_pipeline)
         performance["pt_accuracy"] = pt_performance["accuracy"]

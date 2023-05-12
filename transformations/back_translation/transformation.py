@@ -58,5 +58,4 @@ class BackTranslation(SentenceOperation):
         return predicted_outputs
 
     def generate(self, sentence: str):
-        perturbeds = self.back_translate(sentence)
-        return perturbeds
+        return self.back_translate(sentence)

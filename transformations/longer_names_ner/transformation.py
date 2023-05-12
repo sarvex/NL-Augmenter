@@ -30,8 +30,8 @@ class LongerNamesNer(TaggingOperation):
         perturbed_sentences = []
         # TODO: Currently perturb only the first name in the sentence. Needs to handle for other names.
         tag = "PERSON" if "B-PERSON" in tag_seq else "PER"
-        b_tag = "B-" + tag
-        i_tag = "I-" + tag
+        b_tag = f"B-{tag}"
+        i_tag = f"I-{tag}"
         assert len(token_seq) == len(
             tag_seq
         ), "Lengths of `token_seq` and `tag_seq` should be the same"

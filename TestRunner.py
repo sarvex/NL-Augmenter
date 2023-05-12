@@ -29,8 +29,7 @@ def load_test_cases(test_json):
 
 
 def convert_to_snake_case(camel_case):
-    name = re.sub(r"(?<!^)(?=[A-Z])", "_", camel_case).lower()
-    return name
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", camel_case).lower()
 
 
 class OperationRuns(object):
@@ -83,22 +82,21 @@ class OperationRuns(object):
             prev_class_args = {}
             for test_case in load_test_cases(t_js):
                 class_name = test_case["class"]
-                class_args = test_case["args"] if "args" in test_case else {}
                 cls = getattr(t_py, class_name)
 
                 is_heavy = cls.is_heavy()
                 if (not heavy) and is_heavy:
                     continue
-                else:
-                    # Check if the same instance (i.e. with the same args is already loaded)
-                    if (filter_instance is None
-                            or filter_instance.name() != class_name
-                            or prev_class_args != class_args):
-                        filter_instance = cls(**class_args)
-                        prev_class_args = class_args
+                class_args = test_case["args"] if "args" in test_case else {}
+                # Check if the same instance (i.e. with the same args is already loaded)
+                if (filter_instance is None
+                        or filter_instance.name() != class_name
+                        or prev_class_args != class_args):
+                    filter_instance = cls(**class_args)
+                    prev_class_args = class_args
 
-                    filters.append(filter_instance)
-                    filter_test_cases.append(test_case)
+                filters.append(filter_instance)
+                filter_test_cases.append(test_case)
 
         self.operations = filters
         self.operation_test_cases = filter_test_cases

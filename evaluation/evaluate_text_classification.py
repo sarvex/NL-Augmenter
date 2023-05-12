@@ -37,7 +37,7 @@ def evaluate(operation, evaluate_filter, model_name, dataset_name, split="test[:
     dataset = TextLineDataset.from_huggingface(hf_dataset, ["text", "label"])
     if evaluate_filter:
         filtered_dataset = dataset.apply_filter(operation)
-        print(f"Here is the performance of the model on the filtered set")
+        print("Here is the performance of the model on the filtered set")
         accuracy, total = evaluate_dataset(
             text_classification_pipeline, filtered_dataset
         )
@@ -48,7 +48,7 @@ def evaluate(operation, evaluate_filter, model_name, dataset_name, split="test[:
         performance["accuracy"] = accuracy
         performance["no_of_examples"] = total
         pt_dataset = dataset.apply_transformation(operation)
-        print(f"Here is the performance of the model on the transformed set")
+        print("Here is the performance of the model on the transformed set")
         accuracy, _ = evaluate_dataset(text_classification_pipeline, pt_dataset)
         performance["pt_accuracy"] = accuracy
     # (3) Execute perturbation

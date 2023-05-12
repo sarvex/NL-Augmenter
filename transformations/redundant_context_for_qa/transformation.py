@@ -20,7 +20,7 @@ class RedundantContextForQa(QuestionAnswerOperation):
     def generate(
         self, context: str, question: str, answers: [str]
     ) -> List[Tuple[str, str, List[str]]]:
-        context = context.rstrip() + " " + context.lstrip()
+        context = f"{context.rstrip()} {context.lstrip()}"
         return [(context, question, answers)]
 
 

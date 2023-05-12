@@ -5,8 +5,6 @@ from transformers import pipeline
 
 
 def convert_ner_ids_to_tags(ner_tags):
-    # convert list of ner ids [0,1,2,0] to list of ner tags ['0', 'B-PER', 'I-PER', '0']
-    ner_tag_sequence = []
     ner_tag_dict = {
         1: "B-PER",
         2: "I-PER",
@@ -17,9 +15,7 @@ def convert_ner_ids_to_tags(ner_tags):
         7: "B-MISC",
         8: "I-MISC",
     }
-    for tag in ner_tags:
-        ner_tag_sequence.append(ner_tag_dict.get(tag, "0"))  # '0', tag for no ner token
-    return ner_tag_sequence
+    return [ner_tag_dict.get(tag, "0") for tag in ner_tags]
 
 
 def create_prediction_seq(prediction, expected_seq_length):

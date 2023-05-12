@@ -51,7 +51,7 @@ def evaluate(operation, evaluate_filter, model_name, dataset_name, split="test[:
 
 
 def filter_performance(dataset, summarization_pipeline, filter):
-    print(f"Here is the performance of the model on the filtered set")
+    print("Here is the performance of the model on the filtered set")
     filtered_dataset = dataset.apply_filter(filter, subfields=["document"])
     return performance_on_dataset(filtered_dataset, summarization_pipeline)
 
@@ -65,7 +65,7 @@ and on the perturbed set.
 def transformation_performance(dataset, summarization_pipeline, transformation):
     performance = performance_on_dataset(dataset, summarization_pipeline)  # 15.989 BLEU
     pt_dataset = dataset.apply_transformation(transformation, subfields=["document"])
-    print(f"Here is the performance of the model on the transformed set")
+    print("Here is the performance of the model on the transformed set")
     pt_performance = performance_on_dataset(
         pt_dataset, summarization_pipeline
     )  # 11.830 BLEU

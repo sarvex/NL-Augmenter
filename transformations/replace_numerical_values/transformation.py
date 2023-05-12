@@ -60,10 +60,10 @@ class NumericalTransformation:
                         floating_length = 0
                         if len(split_entity_value_list) > 1:
                             floating_length = len(split_entity_value_list[1])
-                        new_value = "%.{}f".format(floating_length) % new_value
+                        new_value = f"%.{floating_length}f" % new_value
 
                         if is_fraction:
-                            new_value = str(Fraction(float(new_value)))
+                            new_value = str(Fraction(new_value))
 
                     if has_formatting:
                         if float(new_value).is_integer():
@@ -78,11 +78,7 @@ class NumericalTransformation:
                         new_value = random.randint(0, value_tens)
                         new_value = num2words(new_value)
                     except ValueError as ve:
-                        print(
-                            "Value: {} is not recognised as an alpha-number".format(
-                                cardinal_value
-                            )
-                        )
+                        print(f"Value: {cardinal_value} is not recognised as an alpha-number")
 
             if new_value:
                 input_text = input_text.replace(entity.text, str(new_value))
@@ -92,19 +88,16 @@ class NumericalTransformation:
     def value_tens_count(self, value):
         value_text = str(value)
         value_text = value_text.split(".")[0]
-        value_length = pow(10, len(value_text))
-
-        return value_length
+        return pow(10, len(value_text))
 
     def is_number(self, value):
         if isinstance(value, numbers.Number):
             return True
-        else:
-            try:
-                float(value)
-                return True
-            except ValueError:
-                return False
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
 
 
 class ReplaceNumericalValues(SentenceOperation):

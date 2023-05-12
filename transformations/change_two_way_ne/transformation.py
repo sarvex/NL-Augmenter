@@ -56,9 +56,8 @@ class ChangeTwoWayNe(SentenceAndTargetOperation):
                     and l.capitalize() not in Perturb.data["name_set"]["last"]
                 ):
                     continue
-            else:
-                if self.last_only:
-                    return None
+            elif self.last_only:
+                return None
             names = Perturb.data["name"][sex][: 90 + n]
             to_use = np.random.choice(names, n)
             if not self.first_only:
@@ -66,7 +65,7 @@ class ChangeTwoWayNe(SentenceAndTargetOperation):
                 if len(x.split()) > 1:
                     last = Perturb.data["name"]["last"][: 90 + n]
                     last = np.random.choice(last, n)
-                    to_use = ["%s %s" % (x, y) for x, y in zip(names, last)]
+                    to_use = [f"{x} {y}" for x, y in zip(names, last)]
                     if self.last_only:
                         to_use = last
                         f = x.split()[1]
@@ -77,7 +76,7 @@ class ChangeTwoWayNe(SentenceAndTargetOperation):
                     re.sub(to_replace, y, target)
                 )  # this is the part added from Checklist
                 ret_m.append((f, y))
-        if len(ret) > 0 and ret[0] != sentence:
+        if ret and ret[0] != sentence:
             perturbed_source = ret[0]
             perturbed_target = outs[0]
             print(
@@ -102,7 +101,7 @@ class ChangeTwoWayNe(SentenceAndTargetOperation):
             ret.extend([sub_re.sub(n, doc.text) for n in to_use])
             outs.extend([sub_re.sub(n, target) for n in to_use])
             ret_m.extend([(x, n) for n in to_use])
-        if len(ret) > 0 and ret[0] != sentence:
+        if ret and ret[0] != sentence:
             perturbed_source = ret[0]
             perturbed_target = outs[0]
         if self.verbose:

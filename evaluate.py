@@ -50,19 +50,17 @@ if __name__ == "__main__":
         implementation = get_implementation(args.transformation)
     else:
         implementation = get_implementation(args.filter, "filters")
-    # Use the tasks and the locales of an implementation to retrieve an HF model and a test set.
-    if True: # domain should have name and locale.
-        languages = implementation.languages
-        if languages != "All" and args.language not in languages:
-            raise ValueError(
-                f"The specified transformation is applicable only for the locales={languages}."
-            )
-        evaluate(
-            implementation,
-            args.task_type,
-            args.language,
-            args.model,
-            args.dataset,
-            args.percentage_of_examples,
-            if_filter
+    languages = implementation.languages
+    if languages != "All" and args.language not in languages:
+        raise ValueError(
+            f"The specified transformation is applicable only for the locales={languages}."
         )
+    evaluate(
+        implementation,
+        args.task_type,
+        args.language,
+        args.model,
+        args.dataset,
+        args.percentage_of_examples,
+        if_filter
+    )

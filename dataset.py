@@ -47,9 +47,7 @@ class TextLineDataset(BaseDataset):
             labels
         ), "The number of datapoint should be the same as the number of labels"
         self.labels = labels
-        self.mapping = {
-            datapoint: label for datapoint, label in zip(self.data, self.labels)
-        }
+        self.mapping = dict(zip(self.data, self.labels))
 
     @classmethod
     def from_huggingface(cls, dataset, fields):
@@ -82,8 +80,7 @@ class TextLineDataset(BaseDataset):
         return TextLineDataset(transformed_data, self.labels)
 
     def __iter__(self):
-        for text, label in zip(self.data, self.labels):
-            yield (text, label)
+        yield from zip(self.data, self.labels)
 
     def __len__(self):
         return len(self.data)
@@ -135,13 +132,10 @@ class KeyValueDataset(BaseDataset):
     @classmethod
     def from_huggingface(cls, dataset, task_type, fields):
         data = []
-        if task_type not in [TaskType.QUESTION_ANSWERING, TaskType.QUESTION_GENERATION]:
-            for example in dataset:
+        for example in dataset:
+            if task_type not in [TaskType.QUESTION_ANSWERING, TaskType.QUESTION_GENERATION]:
                 data.append({key: example[key] for key in fields})
-        else:
-            # this is an ugly implementation, which hard-codes the squad data format
-            # TODO might need a more elegant way to deal with the fields with hierachy, e.g. the answers field in squad data (exampl['answers']['text'])
-            for example in dataset:
+            else:
                 data.append(
                     {
                         fields[0]: example[fields[0]],
@@ -157,7 +151,7 @@ class KeyValueDataset(BaseDataset):
 
         assert set(subfields) <= set(
             self.fields
-        ), "Your can only choose from fields within {}".format(self.fields)
+        ), f"Your can only choose from fields within {self.fields}"
 
         if self.task_type == TaskType.TEXT_TO_TEXT_GENERATION:
             if len(subfields) == 1:
@@ -178,9 +172,9 @@ class KeyValueDataset(BaseDataset):
             else:
                 self.operation_type = "question_answer"
 
-        filter_func = self.__getattribute__("_apply_" + self.operation_type + "_filter")
+        filter_func = self.__getattribute__(f"_apply_{self.operation_type}_filter")
         transformation_func = self.__getattribute__(
-            "_apply_" + self.operation_type + "_transformation"
+            f"_apply_{self.operation_type}_transformation"
         )
         return filter_func, transformation_func
 
@@ -191,12 +185,12 @@ class KeyValueDataset(BaseDataset):
     ) -> KeyValueDataset:
         filter_func, _ = self._analyze(subfields)
 
-        filtered_data = []
         print("Applying filtering:")
-        for datapoint in tqdm(self.data):
-            if filter_func(datapoint, filter):
-                filtered_data.append(datapoint)
-
+        filtered_data = [
+            datapoint
+            for datapoint in tqdm(self.data)
+            if filter_func(datapoint, filter)
+        ]
         return KeyValueDataset(filtered_data, self.task_type, self.fields)
 
     def _apply_sentence_filter(self, datapoint: dict, filter: SentenceOperation):
@@ -270,8 +264,7 @@ class KeyValueDataset(BaseDataset):
         )
         datapoints = []
         for to in transformed:
-            datapoint_n = dict()
-            datapoint_n[self.fields[0]] = to[0]
+            datapoint_n = {self.fields[0]: to[0]}
             for i, target_key in enumerate(self.fields[1:]):
                 datapoint[target_key] = to[1][i]
             datapoints.append(datapoint_n)
@@ -287,9 +280,7 @@ class KeyValueDataset(BaseDataset):
 
         datapoints = []
         for to in transformed:
-            datapoint_n = dict()
-            datapoint_n[self.fields[0]] = to[0]
-            datapoint_n[self.fields[1]] = to[1]
+            datapoint_n = {self.fields[0]: to[0], self.fields[1]: to[1]}
             for i, answers_key in enumerate(self.fields[2:]):
                 datapoint_n[answers_key] = to[i]
             datapoints.append(datapoint_n)
@@ -328,10 +319,7 @@ class KeyValueDataset(BaseDataset):
         return id2datapoint, identifier2id, identifiers
 
     def _identifier2data(self, id2datapoint, identifier2id, identifiers):
-        result_data = []
-        for identifier in identifiers:
-            result_data.append(id2datapoint[identifier2id[identifier]])
-        return result_data
+        return [id2datapoint[identifier2id[identifier]] for identifier in identifiers]
 
     def __or__(self, other: KeyValueDataset) -> KeyValueDataset:
         self._sanity_check(other)

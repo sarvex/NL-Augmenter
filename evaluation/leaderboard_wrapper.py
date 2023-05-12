@@ -83,21 +83,20 @@ def create_leaderboard_for_task(
         print(f"---- Evaluating {model_name} on {dataset_name} -----")
         for trans in transformations:
             print(f"| Transformation: {trans.name()}")
-            if True:
-                result = execute_model(
-                    implementation=trans.__class__,
-                    task_type=task_name,
-                    model_name=model_name,
-                    dataset=dataset_name,
-                    percentage_of_examples=percentage_of_examples,
-                )
-                if "accuracy" in result:
-                    key, pt_key = "accuracy", "pt_accuracy"
-                if "bleu" in result:
-                    key, pt_key = "bleu", "pt_bleu"
-                result_dict[trans.name()][f"{model_name}\n({dataset_name})"] = (
-                    result[key] - result[pt_key]
-                )
+            result = execute_model(
+                implementation=trans.__class__,
+                task_type=task_name,
+                model_name=model_name,
+                dataset=dataset_name,
+                percentage_of_examples=percentage_of_examples,
+            )
+            if "accuracy" in result:
+                key, pt_key = "accuracy", "pt_accuracy"
+            if "bleu" in result:
+                key, pt_key = "bleu", "pt_bleu"
+            result_dict[trans.name()][f"{model_name}\n({dataset_name})"] = (
+                result[key] - result[pt_key]
+            )
     df_result = pd.DataFrame(list(result_dict.values()))
     print("Finished! The leaderboard:")
     print(df_result.to_markdown(index=False))

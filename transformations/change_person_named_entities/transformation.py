@@ -22,9 +22,8 @@ class ChangePersonNamedEntities(SentenceOperation):
         perturbed = Perturb.perturb(
             [self.nlp(sentence)], Perturb.change_names, nsamples=1
         )
-        perturbed_texts = (
+        return (
             perturbed.data[0][1 : self.max_output]
             if len(perturbed.data) > 0
             else [sentence]
         )
-        return perturbed_texts
